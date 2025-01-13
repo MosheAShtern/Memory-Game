@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 class GameProvider extends ChangeNotifier {
-  List<bool> flippedCards = List.generate(12, (index) => false); // 12 קלפים
+  late List<bool> flippedCards; // מצב קלפים
+
+  void initializeGame(int cardCount) {
+    flippedCards = List.generate(cardCount, (index) => false);
+    notifyListeners(); // לעדכן את ה-UI
+  }
 
   void flipCard(int index) {
     flippedCards[index] = !flippedCards[index];
-    notifyListeners(); // מעדכן את ה-UI
+    notifyListeners();
   }
 
   void resetGame() {
-    flippedCards = List.generate(12, (index) => false);
+    for (int i = 0; i < flippedCards.length; i++) {
+      flippedCards[i] = false;
+    }
     notifyListeners();
   }
 }

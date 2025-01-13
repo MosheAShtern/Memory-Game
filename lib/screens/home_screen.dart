@@ -15,33 +15,40 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
-                );
-              },
-              child: Text('Easi Game'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
-                );
-              },
-              child: Text('Casual Game'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
-                );
-              },
-              child: Text('Hard Game'),
-            ),
+ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameScreen(difficulty: 'Easy'),
+      ),
+    );
+  },
+  child: Text('Easy Game'),
+),
+ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameScreen(difficulty: 'Casual'),
+      ),
+    );
+  },
+  child: Text('Casual Game'),
+),
+ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameScreen(difficulty: 'Hard'),
+      ),
+    );
+  },
+  child: Text('Hard Game'),
+),
+
           ],
         ),
       ),
