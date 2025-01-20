@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memory_game/models/card_model.dart';
+import 'package:memory_game/utils/card_.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
 
@@ -12,28 +14,34 @@ class GameScreen extends StatelessWidget {
     final gameProvider = Provider.of<GameProvider>(context);
 
     // קביעת פרמטרים לפי רמת הקושי
-    int rows, cols, cardCount;
+    int rows, cols, cardCount, numberOfCards;
     switch (difficulty) {
       case 'Easy':
         rows = 2;
         cols = 3;
         cardCount = rows * cols; // 6 קלפים
+        numberOfCards = 3;
         break;
       case 'Casual':
         rows = 3;
         cols = 4;
         cardCount = rows * cols; // 12 קלפים
+        numberOfCards = 6;
         break;
       case 'Hard':
         rows = 4;
         cols = 4;
         cardCount = rows * cols; // 16 קלפים
+        numberOfCards = 8;
         break;
       default:
         rows = 3;
         cols = 4;
         cardCount = rows * cols; // ברירת מחדל: 12 קלפים
+        numberOfCards = 6;
     }
+
+    List<GameCard> cards = getRandomCards(numberOfCards); 
 
     // אתחול מצב המשחק (רק פעם אחת)
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -63,21 +71,9 @@ class GameScreen extends StatelessWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         color: gameProvider.flippedCards[row * cols + col]
-                            ? Colors.green
+                            ? cards.removeAt(0).color
                             : Colors.blue,
                         borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: gameProvider.flippedCards[row * cols + col]
-                            ? Text(
-                                '${row * cols + col}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : Text(''),
                       ),
                     ),
                   ),
