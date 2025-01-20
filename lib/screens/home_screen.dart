@@ -1,57 +1,52 @@
 import 'package:flutter/material.dart';
-import 'game_screen.dart';
+import 'selection_screen.dart'; // ייבוא הדף SelectionScreen
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _nameController = TextEditingController();
+
+  void _navigateToSelectionScreen(BuildContext context) {
+    final String name = _nameController.text;
+    if (name.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SelectionScreen(name: name), // שימוש ב-SelectionScreen
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Memory Game')),
-      body: Center(
+      appBar: AppBar(
+        title: Text('Welcome to Memory Game!'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome to Memory Game!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          children: <Widget>[
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'הזן את שמך',
+              ),
             ),
             SizedBox(height: 20),
-ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GameScreen(difficulty: 'Easy'),
-      ),
-    );
-  },
-  child: Text('Easy Game'),
-),
-ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GameScreen(difficulty: 'Casual'),
-      ),
-    );
-  },
-  child: Text('Casual Game'),
-),
-ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GameScreen(difficulty: 'Hard'),
-      ),
-    );
-  },
-  child: Text('Hard Game'),
-),
-
+            ElevatedButton(
+              onPressed: () => _navigateToSelectionScreen(context),
+              child: Text('המשך לבחירת רמה'),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
