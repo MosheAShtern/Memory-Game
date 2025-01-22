@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'selection_screen.dart'; // ייבוא הדף SelectionScreen
+import 'selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,8 +15,12 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SelectionScreen(name: name), // שימוש ב-SelectionScreen
+          builder: (context) => SelectionScreen(name: name),
         ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('אנא הזן את שמך')),
       );
     }
   }
@@ -49,4 +53,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

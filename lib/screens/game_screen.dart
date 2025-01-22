@@ -1,86 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/models/card_model.dart';
-import 'package:memory_game/utils/card_.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
 
 class GameScreen extends StatelessWidget {
   final String difficulty;
 
-  GameScreen({required this.difficulty});
+  const GameScreen({Key? key, required this.difficulty}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final gameProvider = Provider.of<GameProvider>(context);
+    return Consumer<GameProvider>(
+      builder: (context, gameProvider, child) {
+        // קביעת פרמטרים לפי רמת הקושי
+        late int rows, cols, cardCount;
+        switch (difficulty) {
+          case 'Easy':
+            rows = 2;
+            cols = 3;
+            break;
+          case 'Medium':
+            rows = 3;
+            cols = 4;
+            break;
+          case 'Hard':
+            rows = 4;
+            cols = 4;
+            break;
+          default:
+            rows = 3;
+            cols = 4;
+        }
+        cardCount = rows * cols;
 
-    // קביעת פרמטרים לפי רמת הקושי
-    int rows, cols, cardCount, numberOfCards;
-    switch (difficulty) {
-      case 'Easy':
-        rows = 2;
-        cols = 3;
-        cardCount = rows * cols; // 6 קלפים
-        numberOfCards = 3;
-        break;
-      case 'Casual':
-        rows = 3;
-        cols = 4;
-        cardCount = rows * cols; // 12 קלפים
-        numberOfCards = 6;
-        break;
-      case 'Hard':
-        rows = 4;
-        cols = 4;
-        cardCount = rows * cols; // 16 קלפים
-        numberOfCards = 8;
-        break;
-      default:
-        rows = 3;
-        cols = 4;
-        cardCount = rows * cols; // ברירת מחדל: 12 קלפים
-        numberOfCards = 6;
-    }
+        // אתחול המשחק אם צריך
+        if (!gameProvider.isInitialized) {
+          gameProvider.initializeGame(cardCount);
+        }
 
-    List<GameCard> cards = getRandomCards(numberOfCards); 
-
-    // אתחול מצב המשחק (רק פעם אחת)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      gameProvider.initializeGame(cardCount);
-    });
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('$difficulty Game'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (int row = 0; row < rows; row++) // יצירת שורות
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int col = 0; col < cols; col++) // יצירת עמודות
-                  GestureDetector(
-                    onTap: () {
-                      int index = row * cols + col; // חישוב אינדקס
-                      gameProvider.flipCard(index);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(8), // רווח בין קלפים
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: gameProvider.flippedCards[row * cols + col]
-                            ? cards.removeAt(0).color
-                            : Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('$difficulty Game'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  gameProvider.resetGame();
+                  gameProvider.initializeGame(cardCount);
+                },
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int row = 0; row < rows; row++)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int col = 0; col < cols; col++)
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                final index = row * cols + col;
+                                gameProvider.flipCard(index);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: gameProvider.flippedCards[row * cols + col]
+                                      ? gameProvider.cards[row * cols + col].color
+                                      : Colors.blue,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 5,
+                                      offset: const Offset(2, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: gameProvider.flippedCards[row * cols + col]
+                                    ? Icon(
+                                        gameProvider.cards[row * cols + col].icon,
+                                        color: Colors.white,
+                                        size: 40,
+                                      )
+                                    : null,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }
